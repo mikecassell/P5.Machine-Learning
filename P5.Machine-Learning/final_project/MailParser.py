@@ -14,8 +14,9 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import cross_validation as cv
 from sklearn.feature_selection import SelectPercentile, f_classif
-mypath = '/home/mike/projects/5. Machine Learning/final_project/'
-mailListPath = '/home/mike/projects/5. Machine Learning/final_project/emails_by_address/'
+mypath = '/home/mike/Desktop/P5.Machine-Learning/final_project/'
+mailDir = '/home/mike/projects/5. Machine Learning/'
+mailListPath = '/home/mike/Desktop/P5.Machine-Learning/emails_by_address/'
 sys.path.append( '../tools/')
 
 from parse_out_email_text import parseOutText
@@ -50,7 +51,6 @@ def parseMailFiles():
     for sender in glob.glob(mailListPath + "from*.txt"):
         mailAddress = trimName(sender.split('/')[-1])
         addresses[mailAddress] = {'FromPath': sender, 'POI': 0}
-    
     # Next we look at how many of our address list are in our base data set and
     # how many are identified as persons of interest.
     pois = 0
@@ -90,7 +90,7 @@ def parseMailFiles():
             # Iterate through each person and each mail
             for path in from_person:
                 path = path.replace('enron_mail_20110402/', 
-                '/home/mike/projects/5. Machine Learning/').replace('\n', '').replace('\r', '')
+                mailDir).replace('\n', '').replace('\r', '')
                 try:                
                     # For each mail, we need to handle text cleanup and add it
                     # to the main word data                    
@@ -111,6 +111,8 @@ def parseMailFiles():
                     t = t.replace(u'john', '')
                     t = t.replace(u'ani', '')
                     t = t.replace(u'david', '')
+                    t = t.replace(u'nonprivilegedpst', '')
+                    t = t.replace(u'messag', '')
                     t = t.replace(u'  ', ' ')
                     t = ' '.join(t.split())
                     # Check for uniqueness and add
@@ -170,6 +172,9 @@ def prepClassifier():
     # Return the important data
     return(words, selector, vectorizer, clf)
 
+# TestSenders
+# Submits each sender's emails to be vectorized and the number of flagged/POI
+# e-mails to be returned in a pkl object
 def testSenders(words, selector, vectorizer, clf):
     auth_file =  mypath + "/p5_email_authors.pkl"
     auths = pickle.load(open(auth_file,'r'))
@@ -189,6 +194,7 @@ def testSenders(words, selector, vectorizer, clf):
     # Now save the resulting predictions
     pickle.dump( results, open("p5_analyzedEmailData.pkl", "w") )
 
+# Since these take a long time to run, uncomment the one that is appropriate
 parseMailFiles()
 words, sel, vect, clf = prepClassifier()        
 testSenders(words, sel, vect, clf)
