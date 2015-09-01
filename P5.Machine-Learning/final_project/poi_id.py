@@ -20,7 +20,7 @@ features_list = ['poi']
 # Ignore email address since it's text
 ignore_list = ['email_address'] 
 
-### Load the dictionary containing the dataset and my processed text data
+# Load the dictionary containing the dataset and my processed text data
 data_dict = pickle.load(open("final_project_dataset.pkl", "r") )
 wordData = pickle.load(open("p5_analyzedEmailData.pkl", "r") )
 
@@ -43,7 +43,8 @@ for p in data_dict:
         data_dict[p]['flaggedMail'] = wordData[mailA]['flaggedMails']
     else:
         data_dict[p]['flaggedMail'] = 'NaN'
-        
+
+print('count:',total, ' poi:',poi)
 for p in data_dict:
     data_dict[p]['flaggedRatio'] = mkRatio(data_dict[p]['flaggedMail'],
             data_dict[p]['from_messages'])
@@ -63,16 +64,17 @@ for p in data_dict:
     if 'salToBonus' not in features_list:
         features_list.append('salToBonus')
         
-# Normalize to facilitate Feature Selection
+# Normalize to facilitate Feature Selection and/or models where normalization 
+# is important.
 fts = {}
 for f in features_list:
     if f not in ignore_list and f != 'poi':
         fts[f] = {'min':0,'max':0}
-        for person in data_dict:
-            if data_dict[person][f] < fts[f]['min'] and data_dict[person][f] != 'NaN':
-                fts[f]['min'] =  data_dict[person][f]
-            if data_dict[person][f] > fts[f]['max'] and data_dict[person][f] != 'NaN':
-                fts[f]['max'] =  data_dict[person][f]
+        for p in data_dict:
+            if data_dict[p][f] < fts[f]['min'] and data_dict[p][f] != 'NaN':
+                fts[f]['min'] =  data_dict[p][f]
+            if data_dict[p][f] > fts[f]['max'] and data_dict[p][f] != 'NaN':
+                fts[f]['max'] =  data_dict[p][f]
 
 for f in features_list:
     if f not in ignore_list and f != 'poi':
@@ -86,7 +88,7 @@ labels, features = targetFeatureSplit(data)
 
 ### Feature Selection
 from sklearn.feature_selection import SelectKBest
-skb = SelectKBest(k=3)
+skb = SelectKBest(k=2)
 skb = skb.fit(features, labels)
 features = skb.transform(features)
 np.shape(features)

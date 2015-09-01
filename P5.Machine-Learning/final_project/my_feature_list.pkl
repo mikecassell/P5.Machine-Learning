@@ -1,10 +1,8 @@
 (lp0
 S'poi'
 p1
-aS'from_this_person_to_poi'
-p2
 aS'flaggedRatio'
-p3
+p2
 aS'fromRatio'
-p4
+p3
 a.

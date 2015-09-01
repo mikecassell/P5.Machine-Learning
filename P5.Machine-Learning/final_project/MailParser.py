@@ -71,9 +71,9 @@ def parseMailFiles():
                 # are added to the toParse list. 
                 toParse.append(eml)
        
-    # I don't have the memory or CPU power to parse all 2300+ senders emails 
-    # and made the decision to keep the n number of POIs plus 2n of non-POIs 
-    # as my sample.
+    # To try and keep the ratio of POIs to Non-POI users consistent with the 
+    # main sample and to keep processing time reasonable, I am taking the POIs
+    # and 10 times that in non-POI e-mails for parsing.
     for sender in addresses:
         if addresses[sender]['POI'] == 0 and cnt <= (10 * pois) and sender not in toParse:
             toParse.append(sender)
@@ -143,7 +143,6 @@ def prepClassifier():
     poi_file = mypath + "p5_pois.pkl"
     words = pickle.load( open(words_file, "r"))
     poi_data = pickle.load( open(poi_file, "r") )
-    
     # Create a test and train split    
     features_train, features_test, labels_train, labels_test = cv.train_test_split(
         words, poi_data, test_size=0.5, random_state=42)
@@ -195,6 +194,6 @@ def testSenders(words, selector, vectorizer, clf):
     pickle.dump( results, open("p5_analyzedEmailData.pkl", "w") )
 
 # Since these take a long time to run, uncomment the one that is appropriate
-parseMailFiles()
+#parseMailFiles()
 words, sel, vect, clf = prepClassifier()        
 testSenders(words, sel, vect, clf)
