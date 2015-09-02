@@ -44,7 +44,6 @@ for p in data_dict:
     else:
         data_dict[p]['flaggedMail'] = 'NaN'
 
-print('count:',total, ' poi:',poi)
 for p in data_dict:
     data_dict[p]['flaggedRatio'] = mkRatio(data_dict[p]['flaggedMail'],
             data_dict[p]['from_messages'])
@@ -124,7 +123,8 @@ clf = DecisionTreeClassifier(criterion='entropy', max_depth=1,
                              min_samples_leaf=5)
     
 clf.fit(features, labels)
-    
+
+
 dump_classifier_and_data(clf, data_dict, features_list)
 # Now print the Udacity test results
 test_classifier(clf, data_dict, features_list)
